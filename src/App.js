@@ -8,6 +8,8 @@ import CheckIcon from '@rsuite/icons/Check';
 import CopyIcon from '@rsuite/icons/Copy';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import useWindowDimensions from './hooks/useWindowDimensions';
+import { SketchPicker } from 'react-color';
+import ColourPicker from './components/ColourPicker';
 
 function App() {
 
@@ -15,27 +17,30 @@ function App() {
   const [shiftDown, setShiftDown] = useState(0);
   const [spread, setSpread] = useState(25);
   const [blur, setBlur] = useState(25);
+  const [shadowColour, setShadowColour] = useState("0,0,0")
+  const [boxColour, setBoxColour] = useState("0,0,0")
   const [opacity, setOpacity] = useState(50);
-  var rawCss = `box-shadow: ${shiftRight}px ${shiftDown}px ${spread}px ${blur}px rgba(0, 0, 0, ${opacity / 100});`
+  var rawCss = `box-shadow: ${shiftRight}px ${shiftDown}px ${spread}px ${blur}px rgba(${shadowColour}, ${opacity / 100});`
   const [copied, setCopied] = useState(false)
 
   const { height, width } = useWindowDimensions();
 
   return (
     <>
-      { width > 768 ? <Navigation /> : <MobileMenu /> }
+      {width > 768 ? <Navigation /> : <MobileMenu />}
       <div className="mainWrapper">
         <div className="previewObjectWrapper">
           <div className="previewObject"
 
             style={{
-              "box-shadow": `${shiftRight}px ${shiftDown}px ${spread}px ${blur}px rgba(0, 0, 0, ${opacity / 100})`
+              "box-shadow": `${shiftRight}px ${shiftDown}px ${spread}px ${blur}px rgba(${shadowColour}, ${opacity / 100})`
             }}
 
           >
             pretty preview... 💅
           </div>
         </div>
+
 
         <div className="sliderContent">
           <div className="sliderWrapper">
@@ -59,12 +64,16 @@ function App() {
             <MainSlider defaultVal={opacity} minVal={0} maxVal={100} changeValue={val => setOpacity(val)} />
           </div>
           <div className="sliderWrapper">
+            <p style={{ marginBottom: "20px" }}>Shadow Colour</p>
+            <ColourPicker setColour={colour => setShadowColour(`${colour.rgb.r},${colour.rgb.g},${colour.rgb.b}`)} />
+          </div>
+          <div className="sliderWrapper">
             <p>CSS</p>
             <Input id="mainCssCode" style={{ margin: "10px 0" }} as="textarea" rows={3} placeholder="css"
               value={rawCss}
             />
             <CopyToClipboard text={rawCss}>
-              <Button onClick={()=>setCopied(true)}>Copy { copied ? <CheckIcon /> : <CopyIcon />}</Button>
+              <Button onClick={() => setCopied(true)}>Copy {copied ? <CheckIcon /> : <CopyIcon />}</Button>
             </CopyToClipboard>
           </div>
         </div>
